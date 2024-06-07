@@ -1,0 +1,51 @@
+//Main Code
+
+package com.example.student;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class StudentApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(StudentApplication.class, args);
+		System.out.println("These are the Student Values from Applicatio.Properties : ");
+	}
+
+}
+
+
+//Runner Code
+
+package com.example.student.Runner;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
+@Component
+public class Runner implements CommandLineRunner {
+	@Value("${Name}")
+	private String ProdName;
+	@Value("${RollNo}")
+	private int RollNo;
+	@Value("${Domain}")
+	private String Domain;
+	@Value("${Company}")
+	private String Company;
+	
+	public String toString() {
+        return "Runner [Name=" + ProdName + ", RollNo=" + RollNo + ", Domain=" + Domain + ", Company=" + Company + "]";
+    }
+	 public void run(String...args) throws Exception{
+		 System.out.println(this);
+	 }
+}
+
+
+
+//Application Properties Code
+
+Name=Sainath Dussa
+RollNo=309
+Domain=Java Full Stack
+Company=TechMahindra
