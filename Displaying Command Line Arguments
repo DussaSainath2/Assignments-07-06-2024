@@ -1,0 +1,28 @@
+// Main Code
+
+package com.example.CLA;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class ClaApplication {
+	public static void main(String[] args) {
+		SpringApplication.run(ClaApplication.class, args);
+	}
+
+}
+
+//Runner Code
+
+package com.example.CLA;
+import java.util.Arrays;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
+@Component
+public class Runner implements CommandLineRunner{
+	public void run(String...args) throws Exception{
+		System.out.println("Command Line Arguments input was : ");
+		System.out.println(args);
+		System.out.println(Arrays.asList(args));
+	}
+}
