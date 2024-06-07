@@ -1,0 +1,184 @@
+// Starter Code
+
+package com.app;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class SpringBootDataJpaH2Application {
+
+	public static void main(String[] args) {
+		SpringApplication.run(SpringBootDataJpaH2Application.class, args);
+		System.out.println("H2 Database App Started.");
+	}
+
+}
+
+
+
+
+
+
+
+//Model Code For Setters and Getters
+
+
+
+
+
+
+
+package com.app.model;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+@Entity
+public class Product {
+  @Id
+  @GeneratedValue
+  private Integer prodId;
+  private String prodName;
+  private double prodCost;
+  private String prodColor;
+  
+  //constructor
+  public Product() {
+	  super();
+  }
+  //Id based constructor
+  public Product(Integer prodId) {
+	  super();
+	  this.prodId=prodId;
+  }
+  //parameterized constructor without id
+  public Product(String prodName,double prodCost,String prodColor) {
+	  super();
+	  this.prodName=prodName;
+	  this.prodCost=prodCost;
+	  this.prodColor=prodColor;
+  }
+  public Product(Integer prodId,String prodName,double prodCost,String prodColor) {
+	  super();
+	  this.prodId=prodId;
+	  this.prodName=prodName;
+	  this.prodCost=prodCost;
+	  this.prodColor=prodColor;
+  }
+  //setter and getter methods
+  public Integer getProdId() {
+	  return prodId;
+  }
+  public void setProdId(Integer prodId) {
+	  this.prodId=prodId;
+  }
+  public String getProdName() {
+	  return prodName;
+  }
+  public void setProdName(String prodName) {
+	  this.prodName=prodName;
+  }
+  public double getProdCost() {
+	  return prodCost;
+  }
+  public void setProdCost(double prodCost) {
+	  this.prodCost=prodCost;
+  }
+  public String getProdColor() {
+	  return prodColor;
+  }
+  public void setProdColor(String prodColor) {
+	  this.prodColor=prodColor;
+  }
+  @Override
+  public String toString() {
+	  return "Product[prodId=" + prodId + ",prodName=" + prodName + ",prodCost=" +prodCost + ",prodColor=" + prodColor + "]";
+  }
+}
+
+
+
+
+
+// Repository code for objects and classes  to store the values in the database
+
+
+
+
+
+
+package com.app.repo;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import com.app.model.Product;
+
+@Repository
+public interface ProductRepository extends JpaRepository<Product,Integer> {
+
+}
+
+
+
+
+// Implementation code for performing the operations
+
+
+
+package com.app.repo.impl;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
+import com.app.model.Product;
+import com.app.repo.ProductRepository;
+
+@Component
+public class OperationRunner implements CommandLineRunner {
+	@Autowired
+	private ProductRepository repo;
+	
+	public void run(String...args) throws Exception {
+		//insert operation
+		/*1.***************SAVE****************/
+		repo.save(new Product("Dog",5,"White"));
+		repo.save(new Product("Cat",2,"Grey"));
+		repo.save(new Product("Horse",10,"Black"));
+		
+		//2 find operations
+		Optional <Product> p = repo.findById(5);
+		if(p.isPresent())
+		{
+			System.out.println(p.get());
+		}
+		else {
+			System.out.println("No Data foound");
+		}
+		//see all the rows of the table.
+		repo.findAll().forEach((System.out::println));
+          System.out.println("All products:");
+	        repo.findAll().forEach(System.out::println);
+
+	        // Delete operation by ID
+	        repo.deleteById(1); // Assuming ID 1 to delete
+	        System.out.println("Deleted product with ID 1");
+
+	        // See all the rows of the table after deletion
+	        System.out.println("All products after deletion:");
+	        repo.findAll().forEach(System.out::println);
+	}
+
+}
+
+
+
+
+// Application Property code 
+
+
+
+spring.application.name=jpa-h2
+#built in properties
+server.port=2019
+spring.jpa.show-sql=true
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2
