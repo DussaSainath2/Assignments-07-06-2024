@@ -1,0 +1,164 @@
+Data JPA in mysql to perform all the curd operations in the data base.
+
+// Main Starter Code
+
+package com.app;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class SpringBootDataJpaMysqlApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(SpringBootDataJpaMysqlApplication.class, args);
+	}
+
+}
+
+
+// Model Code for Getters and Setters 
+
+
+
+package com.app.model;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
+public class Product {
+	@Id
+	private Integer prodId;
+	private String vendorCode;
+    private String prodName;
+	private Double prodCost;
+	  
+	  //constructor
+	  public Product() {
+		  super();
+	  }
+	  //Id based constructor
+	  public Product(Integer prodId) {
+		  super();
+		  this.prodId=prodId;
+	  }
+	  public Product(Integer prodId,String vendorCode,String prodName,double prodCost) {
+		  super();
+		  this.prodId=prodId;
+		  this.vendorCode=vendorCode;
+		  this.prodName=prodName;
+		  this.prodCost=prodCost;
+		}
+	  //setter and getter methods
+	  public Integer getProdId() {
+		  return prodId;
+	  }
+	  public void setProdId(Integer prodId) {
+		  this.prodId=prodId;
+	  }
+	  
+	  public String getVendorCode() {
+		  return vendorCode;
+	  }
+	  public void setVendorCode(String vendorCode) {
+		  this.vendorCode=vendorCode;
+	  }
+	  
+	  public String getProdName() {
+		  return prodName;
+	  }
+	  public void setProdName(String prodName) {
+		  this.prodName=prodName;
+	  }
+	  public Double getProdCost() {
+		  return prodCost;
+	  }
+	  public void setProdCost(Double prodCost) {
+		  this.prodCost=prodCost;
+	  }
+	  
+	  @Override
+	  public String toString() {
+		  return "Product[prodId=" + prodId + ",prodName=" + prodName + ",prodCost=" +prodCost + ",vendorCode=" + vendorCode + "]";
+	  }
+
+}
+
+
+
+// Repository Code 
+
+
+
+package com.app.repo;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import com.app.model.Product;
+import java.util.List;
+@Repository
+public interface ProductRepository extends JpaRepository<Product,Integer> {
+	interface myView {
+		//copy from getter methods
+		String getVendorCode();
+		String getProdName();
+		Double getProdCost();
+	}
+	//select code,cost from prodtabwhere ven_code=?
+	List<myView>findByVendorCode(String vc);
+
+}
+
+
+
+
+// Implementation Code 
+
+
+
+
+package com.app.runner;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
+import com.app.model.Product;
+import com.app.repo.ProductRepository;
+import com.app.repo.ProductRepository.myView;
+import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+@Component
+public class MyRunner implements CommandLineRunner {
+    private final static Logger LOGGER = LoggerFactory.getLogger(MyRunner.class);
+    
+    @Autowired
+    private ProductRepository repo;
+
+    @Override
+    public void run(String... args) throws Exception {
+        // Insert operation
+        /*1.***************SAVE****************/
+        repo.save(new Product(1, "Google", "CALIFORNIA", 100.5));
+        repo.save(new Product(2, "AMAZON", "CANADA", 85000.0));
+        repo.save(new Product(3, "NETFLIX", "ITALY", 25000.0));
+
+        // Read operation
+        List<myView> p = repo.findByVendorCode("AB");
+        for (myView p1 : p) {
+            System.out.println(p1.getVendorCode() + "," + p1.getProdName() + "," + p1.getProdCost());
+        }
+
+        // Update operation
+        Product existingProduct = repo.findById(1).orElseThrow(() -> new RuntimeException("Product not found"));
+        existingProduct.setProdName("Google LLC");
+        existingProduct.setProdCost(150.0);
+        repo.save(existingProduct);
+        LOGGER.info("Updated Product: " + existingProduct);
+
+        // Delete operation
+        repo.deleteById(3);
+        LOGGER.info("Deleted Product with ID 3");
+    }
+}
